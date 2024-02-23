@@ -10,19 +10,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v3
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: '3.x'
-
       - name: Install Graphviz
         run: sudo apt-get update && sudo apt-get install -y graphviz
-
       - name: Install WireViz
         run: pip install wireviz
-
       - name: Generate Diagrams and Commit
         run: |
           set -e  # Ensure that the script exits on the first error
