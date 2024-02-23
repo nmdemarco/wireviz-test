@@ -1,26 +1,36 @@
+# daisy chain, variant 1
+templates:
+  - &template_con
+    type: '<a href="https://www.molex.com/molex/products/family/kk_254_rpc_connector_system">Molex KK 254</a>'
+    subtype: female
+    pinlabels: [GND, VCC, SCL, SDA]
+  - &template_wire
+    gauge: 0.25 mm2
+    length: 0.2
+    colors: [PK, TQ, YE, VT]
+    category: bundle
+    type: I2C
+
 connectors:
   X1:
-    type: D-Sub
-    subtype: female
-    pinlabels: [DCD, RX, TX, DTR, GND, DSR, RTS, CTS, RI]
+    <<: *template_con
   X2:
-    type: Molex KK 254
-    subtype: female
-    pinlabels: [GND, RX, TX]
+    <<: *template_con
+  X3:
+    <<: *template_con
 
 cables:
   W1:
-    gauge: 0.25 mm2
-    length: 0.2
-    color_code: DIN
-    wirecount: 3
-    shield: true
+    <<: *template_wire
+  W2:
+    <<: *template_wire
 
 connections:
   -
-    - X1: [5,2,3]
-    - W1: [1,2,3]
-    - X2: [1,3,2]
+    - X1: [1-4]
+    - W1: [1-4]
+    - X2: [1-4]
   -
-    - X1: 5
-    - W1: s
+    - X2: [1-4]
+    - W2: [1-4]
+    - X3: [1-4]
