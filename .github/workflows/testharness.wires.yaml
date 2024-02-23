@@ -1,0 +1,65 @@
+# Define the connector types
+connectors:
+  - name: Molex_KK_2_pin
+    description: Molex KK connector with 2 pins
+    pins:
+      - name: 1
+        description: Power
+      - name: 2
+        description: Ground
+
+  - name: Servo_Connector
+    description: Standard servo connector
+    pins:
+      - name: Signal
+        description: PWM signal
+      - name: Power
+        description: Positive voltage
+      - name: Ground
+        description: Ground
+
+# Define the components
+components:
+  - name: Microcontroller
+    description: ESP32 microcontroller
+    shape: rectangle
+    width: 50
+    height: 30
+    pins:
+      - name: VCC
+        description: Power supply
+        connector: Molex_KK_2_pin:1
+      - name: GND
+        description: Ground
+        connector: Molex_KK_2_pin:2
+      - name: RX
+        description: Serial receive
+      - name: TX
+        description: Serial transmit
+      - name: GPIO12
+        description: General-purpose I/O
+
+  - name: Servo
+    description: SG90 micro servo
+    shape: circle
+    width: 20
+    height: 20
+    pins:
+      - name: Signal
+        description: Control signal
+        connector: Servo_Connector:1
+      - name: Power
+        description: Positive voltage
+        connector: Servo_Connector:2
+      - name: Ground
+        description: Ground
+        connector: Servo_Connector:3
+
+# Define the connections
+connections:
+  - source: Microcontroller:TX
+    target: Servo:Signal
+
+# Generate the visualization
+generate:
+  format: html
