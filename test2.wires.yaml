@@ -1,7 +1,7 @@
 # Define the connector types
 connectors:
   - name: Molex_KK_2_pin
-    description: Molex KK connector with 2 pins
+    description: Molex KK connector with two pins
     pins:
       - name: 1
         description: Power
