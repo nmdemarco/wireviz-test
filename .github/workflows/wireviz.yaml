@@ -1,0 +1,39 @@
+name: WireViz Diagram Automation
+
+on:
+  push:
+    paths:
+      - '**/*.wires.yaml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Install Graphviz
+        run: sudo apt-get update && sudo apt-get install -y graphviz
+
+      - name: Install WireViz
+        run: pip install wireviz
+
+      - name: Generate Diagrams and Commit
+        run: |
+          set -e  # Ensure that the script exits on the first error
+          find . -name '*.wires.yaml' | while read file; do
+            if ! wireviz "$file"; then
+              echo "::error ::Failed to generate diagram for $file"
+              exit 1
+            fi
+          done
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
+          git add .
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-generated diagrams [skip ci]" && git push)
+        shell: bash
