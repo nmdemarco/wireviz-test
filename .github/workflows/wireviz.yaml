@@ -1,4 +1,4 @@
-name: WireViz Diagram Automation
+name: WireViz diagram automation
 
 on:
   push:
@@ -22,10 +22,15 @@ jobs:
       - name: Generate Diagrams and Commit
         run: |
           set -e  # Ensure that the script exits on the first error
-          find . -name '*.wires.yaml' | while read file; do
-            if ! wireviz "$file"; then
-              echo "::error ::Failed to generate diagram for $file"
-              exit 1
+          git fetch --depth=1 origin main
+          CHANGED_FILES=$(git diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD main) | grep '\.wires\.yaml$')
+          echo "Changed .wires.yaml files: $CHANGED_FILES"
+          for file in $CHANGED_FILES; do
+            if [[ "$file" != *".github/"* ]]; then
+              if ! wireviz "$file"; then
+                echo "::error ::Failed to generate diagram for $file"
+                exit 1
+              fi
             fi
           done
           git config --global user.name 'GitHub Action'
