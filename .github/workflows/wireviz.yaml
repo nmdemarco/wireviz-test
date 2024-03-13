@@ -1,4 +1,5 @@
 name: WireViz diagram automation
+# Ignore any files or pathspecs found in .wireviz-ignore
 
 on:
   push:
@@ -19,20 +20,34 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y graphviz
       - name: Install WireViz
         run: pip install wireviz
-      - name: Generate Diagrams and Commit
+      - name: Generate diagrams and commit
         run: |
           set -e  # Ensure that the script exits on the first error
-          git fetch --depth=1 origin main
-          CHANGED_FILES=$(git diff --name-only FETCH_HEAD $(git merge-base FETCH_HEAD main) | grep '\.wires\.yaml$')
-          echo "Changed .wires.yaml files: $CHANGED_FILES"
-          for file in $CHANGED_FILES; do
-            if [[ "$file" != *".github/"* ]]; then
+          
+          # Create an array to hold the ignore patterns
+          IFS=$'\n' read -d '' -r -a ignore_patterns < .wireviz-ignore
+          
+          # Find all .wires.yaml files and loop through them
+          find . -name '*.wires.yaml' | while read file; do
+            # Check each file against ignore patterns
+            ignore=false
+            for pattern in "${ignore_patterns[@]}"; do
+              if [[ "$file" == $pattern ]]; then
+                ignore=true
+                break
+              fi
+            done
+            
+            if [ "$ignore" = false ]; then
               if ! wireviz "$file"; then
                 echo "::error ::Failed to generate diagram for $file"
                 exit 1
               fi
+            else
+              echo "Ignoring file $file based on .wireviz-ignore"
             fi
           done
+          
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
           git add .
