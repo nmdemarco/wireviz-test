@@ -1,5 +1,4 @@
-name: WireViz diagram automation
-# Ignore any files or pathspecs found in .wireviz-ignore
+name: WireViz Diagram Automation
 
 on:
   push:
@@ -20,12 +19,17 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y graphviz
       - name: Install WireViz
         run: pip install wireviz
-      - name: Generate diagrams and commit
+      - name: Generate Diagrams and Commit
         run: |
           set -e  # Ensure that the script exits on the first error
           
-          # Create an array to hold the ignore patterns
-          IFS=$'\n' read -d '' -r -a ignore_patterns < .wireviz-ignore
+          # Initialize an empty array for ignore patterns
+          ignore_patterns=()
+          
+          # Check if .wireviz-ignore exists and read it into the array if it does
+          if [ -f ".wireviz-ignore" ]; then
+            IFS=$'\n' read -d '' -r -a ignore_patterns < .wireviz-ignore
+          fi
           
           # Find all .wires.yaml files and loop through them
           find . -name '*.wires.yaml' | while read file; do
