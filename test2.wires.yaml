@@ -1,4 +1,5 @@
 # daisy chain, variant 1
+# push note 1
 templates:
   - &template_con
     type: '<a href="https://www.molex.com/molex/products/family/kk_254_rpc_connector_system">Molex KK 254</a>'
